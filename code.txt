@@ -1,0 +1,32 @@
+GET.LATE.ICD.NPR
+""^MIS.BAR.BCH.zcus.sa.transfer.icd.acct,
+"C"^BAR.PAT.txn.class,
+DO{@Next(MIS.BAR.BCH.zcus.sa.transfer.icd.acct) MIS.BAR.BCH.zcus.
+sa.transfer.icd.acct^R|6,
+@DO.ID.NPR.ICD,
+IF{txn.account @DO.ICD.LOOP.NPR}}
+
+DO.ICD.LOOP.NPR
+""^MIS.BAR.BCH.zcus.sa.transfer.icd.spec,
+DO{@Next(MIS.BAR.BCH.zcus.sa.transfer.icd.spec) ""^MIS.BAR.BCH.zcus.sa.
+transfer.icd.proc,
+DO{@Next(MIS.BAR.BCH.zcus.sa.transfer.icd.proc) @MIS.BAR.BCH.zcus.sa.transfer.icd^ICD,
+""^TXN.FOUND,
+;i ICD 10 code identifier
+c.clinical.source_D(127)_MIS.BAR.BCH.zcus.sa.transfer.icd.spec_MIS.
+BAR.BCH.zcus.sa.transfer.icd.proc^i,
+""^BAR.PAT.txn.urn,
+DO{@Next(BAR.PAT.txn.urn)&('TXN.FOUND) IF{@BAR.PAT.txn.fixed;
+i'=(@BAR.PAT.zcus.sa.icd.identifier_@BAR.PAT.txn.procedure);
+"MIS.DQ"^BAR.PAT.txn.cd.query,
+ICD^@BAR.PAT.txn.cd.response,
+"MAN"^@MIS.BAR.BCH.zcus.sa.transfer.icd.post,
+1^TXN.FOUND,
+@TMP.OPT.BAR.PAT.TRANSACTION.CD.QUERIES}}}}
+
+DO.ID.NPR.ICD
+IF{MIS.BAR.BCH.zcus.sa.transfer.icd.acct#0="&" +@BAR.
+PAT.cl.number.x[MIS.BAR.BCH.zcus.sa.transfer.icd.acct%0,""];
+CANADA IF{'NPR +@BAR.PAT.int.number.x[MIS.BAR.BCH.zcus.sa.transfer.icd.acct,""];
++@BAR.PAT.number.x[MIS.BAR.BCH.zcus.sa.transfer.icd.acct,""]};
++@BAR.PAT.number.x[MIS.BAR.BCH.zcus.sa.transfer.icd.acct,""]}^txn.account
